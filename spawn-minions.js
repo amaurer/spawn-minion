@@ -4,7 +4,6 @@ var child_process = require('child_process');
 
 function SpawnMinions(){
 	this.numCPUs = require('os').cpus().length;
-	this.processes = [];
 	this.queue = [];
 	this.processQueue = [];
 	this.finishedQueue = [];

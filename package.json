@@ -9,6 +9,7 @@
 		,"url" : "https://github.com/amaurer/spawn-minion.git"
 	}
 	,"dependencies" : {
+		"node-uuid" : "1.4.0"
 	}
 	,"engine" : "0.8.14"
 }
