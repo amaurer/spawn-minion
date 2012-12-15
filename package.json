@@ -1,0 +1,10 @@
+{
+	"name" : "spawn-minion",
+	"author" : "Andrew Maurer <andrew@maurer.me>",
+	"description" : "A module that spawns new threads for each argument passed to it. Creates a queue and limits the number of running processes to CPU count.",
+	"version" : "0.0.1",
+	"dependencies" : {
+		"node-uuid" : "1.4.0"
+	}
+	"engine" : "0.8.14"
+}
