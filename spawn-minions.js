@@ -46,6 +46,11 @@ SpawnMinions.prototype.conquered = function(cb) {
 	return this;
 };
 
+SpawnMinions.prototype.signalFlare = function(cb) {
+	this._cb.incomingData = cb;
+	return this;
+};
+
 SpawnMinions.prototype.warReport = function(cb) {
 	this._cb.report = cb;
 	return this;
@@ -89,18 +94,22 @@ SpawnMinions.prototype.processJob = function() {
 	node = child_process.spawn("node", queueObject.args);
 
 	node.stdout.on("data", function(databuffer){
+		var stringdata = databuffer.toString();
 		var processPos = self.getJob("processQueue", jobUID);
-		self.processQueue[processPos].data += databuffer.toString();
+		var job = self.processQueue[processPos];
+			job.data += stringdata;
+		// report a data message to the user
+		self._cb.incomingData(job.pos, stringdata, job.data);
 	});
 
 	node.on("close", function(e, param){
 		var processPos = self.getJob("processQueue", jobUID);
-		var finishedJob = self.processQueue.splice(processPos, 1)[0];
-			finishedJob.e = (e === 0)? null : e;
+		var job = self.processQueue.splice(processPos, 1)[0];
+			job.e = (e === 0)? null : e;
 
 		// report back to the user and add to finished Queue
-		self._cb.report(finishedJob.e, finishedJob.pos, finishedJob.data, param);
-		self.finishedQueue.push(finishedJob);
+		self._cb.report(job.e, job.pos, job.data, param);
+		self.finishedQueue.push(job);
 
 		// Proccess Next Job
 		self.processJob();

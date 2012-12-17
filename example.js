@@ -18,22 +18,32 @@ var sp = new SpawnMinions();
 		["./minion.js", "testing12"],
 		["./minion.js", "testing13"]
 	)
+	// Executed when the thread reports STDOUT data event
+	.signalFlare(function(pos, messageData, data){
+		// REMOVE THIS TO SEE EACH PROCESSES RESULT
+		return;
+		console.log("pos", pos) // position of minion request as above in armyGo() [....]
+		console.log("messageData", messageData) // single instance of buffer output
+		console.log("data", data) // all of the buffer output concatenated
+	})
+	// Executed when a minion exits
 	.warReport(function(e, pos, data, result){
 		// REMOVE THIS TO SEE EACH PROCESSES RESULT
 		return;
-		console.log("e", e)
-		console.log("pos", pos)
-		console.log("data", data)
-		console.log("result", result)
+		console.log("e", e) // Error
+		console.log("pos", pos) // position of minion request as above in armyGo() [....]
+		console.log("data", data) // all of the buffer output concatenated
+		console.log("result", result) // Passed back from thread/minion
 	})
+	// Executed when all of the minions are finished
 	.conquered(function(e){
-		console.log(e);
+		console.log(e); // Error
 	});
 
 	var queueCheck = setInterval(function(){
-		console.log("Queue - " + sp.queue.length);
-		console.log("processQueue - " + sp.processQueue.length);
-		console.log("finishedQueue - " + sp.finishedQueue.length);
+		console.log("queue - " + sp.queue.length); // waiting to process
+		console.log("processQueue - " + sp.processQueue.length); // in process
+		console.log("finishedQueue - " + sp.finishedQueue.length); // finished processing
 		if(sp.finishedQueue.length !== 0 && sp.processQueue.length === 0 && sp.queue.length === 0 ){
 			clearInterval(queueCheck);
 		};
