@@ -18,6 +18,10 @@ var sp = new SpawnMinions();
 		["./minion.js", "testing12"],
 		["./minion.js", "testing13"]
 	)
+	// Executed when a message or data is sent from the process. Used for sending back data instead of text
+	.causalty(function(e){
+		console.log("error", e.toString());
+	})
 	// Executed when the thread reports STDOUT data event
 	.signalFlare(function(pos, messageData, data){
 		// REMOVE THIS TO SEE EACH PROCESSES RESULT
@@ -40,6 +44,8 @@ var sp = new SpawnMinions();
 		console.log(e); // Error
 	});
 
+// Remove this to see the queue
+return;
 	var queueCheck = setInterval(function(){
 		console.log("queue - " + sp.queue.length); // waiting to process
 		console.log("processQueue - " + sp.processQueue.length); // in process

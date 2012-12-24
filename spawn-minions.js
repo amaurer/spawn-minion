@@ -9,7 +9,8 @@ function SpawnMinions(){
 	this.finishedQueue = [];
 	this._cb = {
 		report : function(){},
-		done : function(){}
+		done : function(){},
+		incomingData : function(){}
 	};
 	this.uuid = require("node-uuid");
 };
@@ -18,10 +19,10 @@ SpawnMinions.prototype.armyGo = function() {
 
 	/*
 		arguments pattern
-			[
+			(
 				[path, arg, arg],
 				[path, arg, arg]
-			]
+			)
 	*/
 
 	// copy args for queue
@@ -48,6 +49,11 @@ SpawnMinions.prototype.conquered = function(cb) {
 
 SpawnMinions.prototype.signalFlare = function(cb) {
 	this._cb.incomingData = cb;
+	return this;
+};
+
+SpawnMinions.prototype.causalty = function(cb) {
+	this._cb.errorHandler = cb;
 	return this;
 };
 
@@ -100,6 +106,10 @@ SpawnMinions.prototype.processJob = function() {
 			job.data += stringdata;
 		// report a data message to the user
 		self._cb.incomingData(job.pos, stringdata, job.data);
+	});
+
+	node.stderr.on("data", function(){
+		self._cb.errorHandler.apply(this, arguments)
 	});
 
 	node.on("close", function(e, param){

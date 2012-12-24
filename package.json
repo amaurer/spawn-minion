@@ -2,7 +2,7 @@
 	 "name" : "spawn-minion"
 	,"author" : "Andrew Maurer <andrew@maurer.me>"
 	,"description" : "A module that spawns new threads for each argument passed to it. Creates a queue and limits the number of running processes to CPU count."
-	,"version" : "0.2.3"
+	,"version" : "0.2.4"
 	,"main" : "spawn-minions.js"
 	, "repository" : {
 		 "type" : "git"
