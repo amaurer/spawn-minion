@@ -138,7 +138,6 @@ SpawnMinions.prototype.processJob = function() {
 	});
 
 	node.stderr.on("data", function(){
-		console.log("on stderr this = ",this,", args = ",arguments);
 		if(self._cb.errorHandler)
 			self._cb.errorHandler.apply(this, arguments)
 	});
