@@ -3,6 +3,7 @@ var child_process = require('child_process');
 
 
 function SpawnMinions(){
+	this.childProcessName = 'node';
 	this.numCPUs = require('os').cpus().length;
 	this.queue = [];
 	this.processQueue = [];
@@ -14,6 +15,33 @@ function SpawnMinions(){
 	};
 	this.uuid = require("node-uuid");
 };
+
+SpawnMinions.prototype.setChildProcessName = function(name) {
+	if(name){
+		this.child_process_name = name;
+	}
+	return this;
+};
+
+SpawnMinions.prototype.addJob = function() {
+	var nextJobIdx = this.queue.length;
+	for (var i = 0, len = arguments.length; i<len; i++) {
+		this.queue.push({
+			args : arguments[i],
+			data : "",
+			e : null,
+			pos : nextJobIdx + i,
+			uid : this.uuid.v1()
+		});
+	}
+	return this;
+};
+SpawnMinions.prototype.start = function() {
+	for (var i = 0, len = this.numCPUs; i<len; i++) {
+		this.processJob();
+	};
+	return this;
+}
 
 SpawnMinions.prototype.armyGo = function() {
 
@@ -95,9 +123,10 @@ SpawnMinions.prototype.processJob = function() {
 	var self = this;
 	var queueObject = this.queue.pop();
 	var jobUID = queueObject.uid;
+	var childProcessName = this.child_process_name;
 
 	this.processQueue.push(queueObject);
-	node = child_process.spawn("node", queueObject.args);
+	node = child_process.spawn(childProcessName, queueObject.args); // CHANGED from 'node' to 'coffee'
 
 	node.stdout.on("data", function(databuffer){
 		var stringdata = databuffer.toString();
@@ -109,7 +138,8 @@ SpawnMinions.prototype.processJob = function() {
 	});
 
 	node.stderr.on("data", function(){
-		self._cb.errorHandler.apply(this, arguments)
+		if(self._cb.errorHandler)
+			self._cb.errorHandler.apply(this, arguments)
 	});
 
 	node.on("close", function(e, param){
